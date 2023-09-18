@@ -64,21 +64,30 @@ void *atencion(void *args)
     // LOGICA
     if (parametros->bandera)
     {
-        cout << "Hola, soy el hilo encargado del kiosco COMPASS" << endl;
-        // Simular el tiempo de pago
-        sleep(tiempo_compass);
+
+        for (int i = 0; i < parametros->cant_carros; i++)
+        {
+            cout << "Hola, soy el hilo " << i << " encargado del kiosco COMPASS" << endl;
+            // Simular el tiempo de pago
+            sleep(tiempo_compass);
+        }
     }
     else
     {
-        cout << "Hola, soy el hilo encargado del kiosco EFECTIVO" << endl;
-        // Simular el tiempo de pago
-        sleep(tiempo_efectivo);
+
+        for (int i = 0; i < parametros->cant_carros; i++)
+        {
+            cout << "Hola, soy el hilo " << i << " encargado del kiosco EFECTIVO" << endl;
+            // Simular el tiempo de pago
+            sleep(tiempo_efectivo);
+        }
     }
     clock_t end_time = clock(); // Marca de tiempo final
-
+    
     // Actualizar variable de tiempos
     t1 = difftime(end_time, start_time) / CLOCKS_PER_SEC;
     t2 = t1 / parametros->cant_carros;
+    //cout << "TIEMPO TOTAL "<<t1<<endl;
 
     // Actualizar tiempos de estructura
     actualizarTiempos(parametros, t1, t2);
@@ -103,11 +112,12 @@ int main()
     int hiloE = pthread_create(&hilo_efectivo, NULL, atencion, &parametros_efectivo);
 
     // Esperar a que los hilos terminen
-    pthread_join(hilo_compass, NULL); // Esperar a que el hilo de COMPASS termine
+    pthread_join(hilo_compass, NULL);  // Esperar a que el hilo de COMPASS termine
     pthread_join(hilo_efectivo, NULL); // Esperar a que el hilo de EFECTIVO termine
 
-
-
+    // Mostrar datos del kiosco
+    cout << "Actualice la estructura de tiempos para COMPASS | Tiempo total: " << parametros_compass.tiempo_total << " | Tiempo promedio: " << parametros_compass.tiempo_promedio << endl;
+    cout << "Actualice la estructura de tiempos para EFECTIVO | Tiempo total: " << parametros_efectivo.tiempo_total << " | Tiempo promedio: " << parametros_efectivo.tiempo_promedio << endl;
 
     // cout << "Actualice la estructura de tiempos para COMPASS | Tiempo total: " << parametros_compass.tiempo_total << " | Tiempo promedio: " << parametros_compass.tiempo_promedio << endl;
     // cout << "Actualice la estructura de tiempos para EFECTIVO | Tiempo total: " << parametros_efectivo.tiempo_total << " | Tiempo promedio: " << parametros_efectivo.tiempo_promedio << endl;
