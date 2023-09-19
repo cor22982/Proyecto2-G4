@@ -29,7 +29,6 @@ pthread_t hilo_compass, hilo_efectivo;
  * @param cant_carros, cantidad de carros que van al  kiosco
  * @param tiempo_total, tiempo total en atender a los carros
  * @param tiempo_promedio, tiempo promedio en atender a los carros
- * @param tiempo_individual, tiempo individual en que se tardo en atender a cada carro
  */
 struct Parametros
 {
