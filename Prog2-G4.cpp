@@ -59,44 +59,21 @@ int main (){
 /// @param tiempos 
 /// @param tipo_tiempo 
 void atencion(int carros,int *array,string tipo,int *tiempos,int tipo_tiempo){
-    int n = carros-1;
+    int n = carros;
     tiempos[0]=0;
     tiempos[1]=0;
     tiempos[2]=0;
 
-    for (int i = 0; i <= n; i+=3)
-    {
-        #pragma omp sections
+    // ---------------- PARALLEL FOR LOGICA DE IMPRESION DE LOS KIOSKOS.
+    // n es el numero de carros ya sea de tipo compass o efectivo. 
+    #pragma omp parallel for
+    for (int i = 0; i < n; i++) {
+        int kisko = i % 3;
+        kisko +=1;
+        #pragma omp critical
         {
-            #pragma omp section
-            { 
-                #pragma omp atomic
-                tiempos[0]+=tipo_tiempo;
-                cout << "\nEl carro: " << array[i]<< " es atendido en el kisko 1 de tipo "<<tipo<<endl; 
-            }
-            #pragma omp section
-            {
-                if(i < n)
-                {
-                    #pragma omp atomic
-                    tiempos[1]+=tipo_tiempo;
-                    cout << "\nEl carro: " << array[i+1]<< " es atendido en el kisko 2 de tipo "<<tipo<<endl;
-                  
-                }
-            }
-            #pragma omp section
-            {
-                if(i < n-1)
-                {   
-                    #pragma omp atomic
-                    tiempos[2]+=tipo_tiempo;
-                    cout << "\nEl carro: " << array[i+2]<< " es atendido en el kisko 3 de tipo "<<tipo<<endl;
-                    
-                }
-            }
+            cout << "\nEl carro: " << array[i]+1 << " es atendido en el kisko " << kisko << " de tipo " << tipo << " SOY EL HILO " << omp_get_thread_num() << endl;
         }
-
-        
     }
     
 }
