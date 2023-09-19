@@ -13,9 +13,9 @@ using namespace std;
 // Cantidad de estaciones para pago por "EFECTIVO"
 #define estaciones_efectivo 3
 // Cantidad de estaciones para pago por "COMPASS"
-#define tiempo_compass 0
+#define tiempo_compass 5
 // Cantidad de estaciones para pago por "EFECTIVO"
-#define tiempo_efectivo 2
+#define tiempo_efectivo 10
 
 // Cantidad de carros que usan el método de pago "COMPASS" y "EFECTIVO"
 int carros_compass, carros_efectivo;
@@ -64,30 +64,40 @@ void *atencion(void *args)
     // LOGICA
     if (parametros->bandera)
     {
-
+        #pragma omp parallel for
         for (int i = 0; i < parametros->cant_carros; i++)
         {
-            cout << "Hola, soy el hilo " << i << " encargado del kiosco COMPASS" << endl;
+            int kisko = i % 3;
+            kisko += 1;
+            #pragma omp critical
+            {
+                cout << "El carro: " << i+1 << " es atendido en el kiosco COMPASS numero " << kisko << ".\tSusurro: soy el trabajador (hilo) numero: " << omp_get_thread_num() << endl;
+            }
             // Simular el tiempo de pago
             sleep(tiempo_compass);
         }
     }
     else
     {
-
+        #pragma omp parallel for
         for (int i = 0; i < parametros->cant_carros; i++)
         {
-            cout << "Hola, soy el hilo " << i << " encargado del kiosco EFECTIVO" << endl;
+            int kisko = i % 3;
+            kisko += 1;
+            #pragma omp critical
+            {
+                cout << "El carro: " << i+1 << " es atendido en el kiosco EFECTIVO numero " << kisko << ".\tSusurro: soy el trabajador (hilo) numero: " << omp_get_thread_num() << endl;
+            }
             // Simular el tiempo de pago
             sleep(tiempo_efectivo);
         }
     }
     clock_t end_time = clock(); // Marca de tiempo final
-    
+
     // Actualizar variable de tiempos
     t1 = difftime(end_time, start_time) / CLOCKS_PER_SEC;
     t2 = t1 / parametros->cant_carros;
-    //cout << "TIEMPO TOTAL "<<t1<<endl;
+    // cout << "TIEMPO TOTAL "<<t1<<endl;
 
     // Actualizar tiempos de estructura
     actualizarTiempos(parametros, t1, t2);
@@ -116,11 +126,11 @@ int main()
     pthread_join(hilo_efectivo, NULL); // Esperar a que el hilo de EFECTIVO termine
 
     // Mostrar datos del kiosco
-    cout << "Actualice la estructura de tiempos para COMPASS | Tiempo total: " << parametros_compass.tiempo_total << " | Tiempo promedio: " << parametros_compass.tiempo_promedio << endl;
-    cout << "Actualice la estructura de tiempos para EFECTIVO | Tiempo total: " << parametros_efectivo.tiempo_total << " | Tiempo promedio: " << parametros_efectivo.tiempo_promedio << endl;
-
-    // cout << "Actualice la estructura de tiempos para COMPASS | Tiempo total: " << parametros_compass.tiempo_total << " | Tiempo promedio: " << parametros_compass.tiempo_promedio << endl;
-    // cout << "Actualice la estructura de tiempos para EFECTIVO | Tiempo total: " << parametros_efectivo.tiempo_total << " | Tiempo promedio: " << parametros_efectivo.tiempo_promedio << endl;
+    cout << "================"<< endl;
+    cout << "||ESTADISTICAS||"<< endl;
+    cout << "================"<< endl;
+    cout << "TIEMPOS COMPASS | Tiempo total: " << parametros_compass.tiempo_total << " minutos | Tiempo promedio: " << parametros_compass.tiempo_promedio <<" minutos."<<endl;
+    cout << "TIEMPOS EFECTIVO | Tiempo total: " << parametros_efectivo.tiempo_total << " minutos | Tiempo promedio: " << parametros_efectivo.tiempo_promedio <<" minutos."<< endl;
 
     return 0;
 }
